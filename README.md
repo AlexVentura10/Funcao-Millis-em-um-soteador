@@ -1,29 +1,28 @@
-Por que descidi usar a Função Millis?
+Qual a importância de usar a Função Millis?
 
-O loop() do Arduino: Uma Tarefa por Vez
+O loop() do Arduino: 
 O Arduino, em sua essência, é um microcontrolador que executa seu código de forma sequencial e única. 
-Ele não é como um computador que pode rodar vários programas ao mesmo tempo em diferentes "threads".
+Ele não é como nossos computadores que pode rodar vários programas ao mesmo tempo em diferentes "threads".
 
-No void loop(), ele começa da primeira linha, executa, vai para a próxima, executa, e assim por diante. 
-Quando chega ao final do loop(), ele simplesmente volta para o início e recomeça tudo. Isso acontece muito, muito rápido.
+No void loop do Arduino():
+Ele começa da primeira linha, executa, vai para a próxima, executa, e assim por diante. 
+Quando chega ao final do loop(), ele simplesmente volta para o início e recomeça tudo. Isso acontece muito extremamente rápido.
 
 O Problema do delay(): Ele PAUSA TUDO
-No meu código anterior, sem o millis(), você tinha:
+No meu código anterior, eu não estava usandp o millis(), e o código era dessa forma:
 
 void loop() 
 {
-  // Faz o LED verde piscar continuamente
   digitalWrite(LED_VERDE, HIGH);
   delay(1000);  // <-- AQUI ESTÁ O PROBLEMA!
   digitalWrite(LED_VERDE, LOW);
   delay(1000);  // <-- E AQUI!
 
-  // ... (código do botão e sorteio) ...
 }
 
 O comando delay(1000); faz o Arduino PARAR completamente por 1000 milissegundos (1 segundo).
 
-O que estava acontecendo:
+O que estava acontecendo e, em um cenário mais crítico, poderia representar um problemão:
 
 1 - O Arduino ligava o LED verde (digitalWrite(LED_VERDE, HIGH);).
 
@@ -37,22 +36,23 @@ Ele não estava lendo o botão, não estava lendo sensores, não estava atualiza
 5 - Somente depois desses 2 segundos totais de delay, o Arduino finalmente seguia para as próximas linhas do loop(), 
 que incluíam a leitura do botão: int estadoBotaoAtual = digitalRead(BOTAO);.
 
-O resultado prático para você:
+O resultado prático:
 
-Você sentia que precisava pressionar o botão por muito tempo (ou em um momento "certo") para que o sorteio ocorresse porque:
+Eu sentia que precisava pressionar o botão por muito tempo (ou em um momento "certo") para que o sorteio ocorresse. Isso porquê:
 
-- Se você pressionasse o botão durante um dos delay(1000), o Arduino simplesmente não registraria essa pressão.
+- Se eu pressionasse o botão durante um dos delay(1000), o Arduino simplesmente não registraria essa pressão.
 Ele só "acordaria" depois que o delay terminasse e, então, finalmente leria o pino do botão.
 
-- Você teria que manter o botão pressionado até que o delay terminasse e o Arduino chegasse à linha digitalRead(BOTAO); 
-para que sua pressão fosse detectada. Se você soltasse o botão antes disso, o clique seria "perdido".
+- Eu teria que manter o botão pressionado até que o delay terminasse e o Arduino chegasse à linha digitalRead(BOTAO); 
+para que sua pressão fosse detectada. Com isso, se eu soltasse o botão antes disso, o clique seria "perdido".
 
-Por que millis() resolve isso:
+
 Com millis(), o delay() é substituído por uma checagem de tempo não bloqueante.
 
 C++
 
-void loop() {
+void loop() 
+{
   // ... (código do pisca-pisca com millis) ...
 
   // O Arduino NÃO PARA AQUI. Ele continua executando rapidamente.
@@ -80,4 +80,4 @@ Em resumo:
 
 - Com millis(): O Arduino está sempre "ativo" e pode lidar com várias tarefas (como piscar um LED e ler um botão) simultaneamente, respondendo a eventos em tempo real.
 
-É por isso que o millis() é preferível para a maioria dos projetos interativos, pois torna seu código muito mais responsivo e capaz de realizar múltiplas tarefas de forma eficiente.
+É por isso que o millis() é indispensável para a maioria dos projetos interativos, pois torna os nossos códigos muito mais responsivos e capaz de realizar múltiplas tarefas de forma eficiente.
